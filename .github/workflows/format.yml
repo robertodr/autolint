@@ -33,6 +33,7 @@ jobs:
         shell: bash -l {0}
         run: |
           echo $GITHUB_WORKSPACE
+          ls $GITHUB_WORKSPACE
           git diff HEAD^ -- $GITHUB_WORKSPACE
           git diff-index --cached --diff-filter=ACMR --name-only HEAD -- $GITHUB_WORKSPACE ':!external' | while read -r file;
           do
