@@ -29,11 +29,13 @@ jobs:
       - shell: bash -l {0}
         run: mamba install clang-tools -c conda-forge
       
-      - shell: bash -l {0}
+      - name: Format with clang
+        shell: bash -l {0}
         run: |
+          git diff HEAD^
           git diff-index --cached --diff-filter=ACMR --name-only HEAD -- . ':!external' | while read -r file;
           do
-             clang-format -i $file
+             clang-format -style=file -i $file
           done
           
       # commit the changes (if there are any)
