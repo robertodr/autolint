@@ -27,9 +27,10 @@ jobs:
           python-version: 3.6
         
       - shell: bash -l {0}
-        run: |
-          mamba install clang-tools -c conda-forge
-          git-clang-format HEAD^
+        run: mamba install clang-tools -c conda-forge
+      
+      - shell: bash -l {0}
+        run: git-clang-format HEAD^
           
       # commit the changes (if there are any)
       - name: Commit changes
