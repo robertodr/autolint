@@ -1,6 +1,10 @@
 name: Code formatting
 
-on: pull_request_review
+#on: pull_request_review
+on:
+  pull_request:
+    branches: 
+      - main
   
 jobs:
   format:
@@ -13,11 +17,32 @@ jobs:
           # make sure the parent commit is grabbed as well, because
           # that's what will get formatted (i.e. the most recent commit)
           fetch-depth: 2
-      # format the latest commit
-      - uses: purduesigbots/clang-format-action@1
+          
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          channels: conda-forge
+          channel-priority: true
+          mamba-version: "*"
+          python-version: 3.6
+        
+      - shell: bash -l {0}
+        run: mamba install clang-tools -c conda-forge
+      
+      - name: Format with clang
+        shell: bash -l {0}
+        run: |
+          git diff main
+          echo "----"
+          git diff-index --cached --diff-filter=ACMR --name-only main -- "$GITHUB_WORKSPACE" ':!external' | while read -r file;
+          do 
+             echo "Formatting file $file"
+             clang-format -style=file -i "$file"
+          done
+          
       # commit the changes (if there are any)
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2
         with:
-          commit_message: 🎨 apply clang-format changes
+          commit_message: apply clang-format changes 🎨
           branch: ${{ github.head_ref }}
