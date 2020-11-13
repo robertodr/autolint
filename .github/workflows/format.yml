@@ -30,11 +30,15 @@ jobs:
         run: mamba install clang-tools -c conda-forge
       
       - shell: bash -l {0}
-        run: git-clang-format HEAD^
+        run: |
+          git diff-index --cached --diff-filter=ACMR --name-only HEAD -- . ':!external' | while read -r file;
+          do
+             clang-format -i $file
+          done
           
       # commit the changes (if there are any)
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2
         with:
-          commit_message: 🎨 apply clang-format changes
+          commit_message: apply clang-format changes 🎨
           branch: ${{ github.head_ref }}
