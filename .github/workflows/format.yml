@@ -32,14 +32,20 @@ jobs:
       - name: Format with clang
         shell: bash -l {0}
         run: |
+          git diff HEAD
+          echo "-----"
           if git rev-parse --verify HEAD >/dev/null 2>&1 ; then
              against=HEAD
           else
              # Initial commit: diff against an empty tree object
              against=$(git hash-object -t tree '/dev/null')
           fi
+          echo "against is $against"
+          git diff $against
+          echo "----"
           git diff-index --cached --diff-filter=ACMR --name-only "$against" -- "$GITHUB_WORKSPACE" ':!external' | while read -r file;
-          do
+          do 
+             echo "Formatting file $file"
              clang-format -style=file -i "$file"
           done
           
