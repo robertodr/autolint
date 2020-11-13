@@ -1,9 +1,6 @@
 name: Code formatting
 
-on: 
-  pull_request:
-    branches:
-      - master
+on: pull_request_review
   
 jobs:
   format:
@@ -16,8 +13,9 @@ jobs:
           # make sure the parent commit is grabbed as well, because
           # that's what will get formatted (i.e. the most recent commit)
           fetch-depth: 2
-      # format the latest commit
-      - uses: purduesigbots/clang-format-action@1.0.2
+      - run: |
+          sudo apt-get -y install clang-format
+          git-clang-format HEAD^
       # commit the changes (if there are any)
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4.1.2
