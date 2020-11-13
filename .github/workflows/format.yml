@@ -32,8 +32,8 @@ jobs:
       - name: Format with clang
         shell: bash -l {0}
         run: |
-          git diff HEAD^
-          git diff-index --cached --diff-filter=ACMR --name-only HEAD -- . ':!external' | while read -r file;
+          git diff $GITHUB_WORKSPACE HEAD^
+          git diff-index --cached --diff-filter=ACMR --name-only HEAD -- $GITHUB_WORKSPACE ':!external' | while read -r file;
           do
              clang-format -style=file -i $file
           done
